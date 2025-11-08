@@ -15,7 +15,21 @@ export default function WorkingWithObjects(app) {
     assignment.title = newTitle;
     res.json(assignment);
   };
-  app.get("/lab5/assignment/title/:newTitle", setAssignmentTitle);
-  app.get("/lab5/assignment/title", getAssignmentTitle);
+  const setAssignmentScore = (req, res) => {
+    const { newScore } = req.params;
+    assignment.score = parseInt(newScore);
+    res.json(assignment);
+  };
+  const setAssignmentCompleted = (req, res) => {
+    const { completed } = req.params;
+    assignment.completed = completed === "true";
+    res.json(assignment);
+  };
+
+
   app.get("/lab5/assignment", getAssignment);
+  app.get("/lab5/assignment/title", getAssignmentTitle);
+  app.get("/lab5/assignment/title/:newTitle", setAssignmentTitle);
+  app.get("/lab5/assignment/score/:newScore", setAssignmentScore);
+  app.get("/lab5/assignment/completed/:completed", setAssignmentCompleted);
 };
