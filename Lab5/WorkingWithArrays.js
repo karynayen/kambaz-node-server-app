@@ -56,6 +56,7 @@ export default function WorkingWithArrays(app) {
     todo.description = description;
     res.json(todos);
   };
+
   app.get("/lab5/todos/:id/description/:description", updateDescription);
   app.get("/lab5/todos/:id/completed/:completed", updateTodoCompleted);
   app.get("/lab5/todos/:id/title/:title", updateTodoTitle);
