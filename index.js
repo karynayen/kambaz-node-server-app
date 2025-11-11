@@ -2,6 +2,7 @@ import express from 'express'
 import Hello from "./Hello.js"
 import cors from 'cors'
 import Lab5 from "./Lab5/index.js";
+import CourseRoutes from "./Kambaz/Courses/routes.js";
 import db from "./Kambaz/Database/index.js";
 import UserRoutes from "./Kambaz/Users/routes.js";
 import "dotenv/config";
@@ -34,6 +35,7 @@ app.use(session(sessionOptions));
 app.use(express.json());
 
 UserRoutes(app, db);
+CourseRoutes(app, db);
 
 Lab5(app);
 Hello(app)
