@@ -48,8 +48,8 @@ const deleteCourse = async (req, res) => {
   app.post("/api/courses", createCourse);
   app.put("/api/courses/:courseId", updateCourse);
   app.delete("/api/courses/:courseId", deleteCourse);
-
-  app.post("courses/api/users/current/", createCourse);
+  app.post("/api/users/current/courses", createCourse);
   app.get("/api/users/:userId/courses", findCoursesForEnrolledUser);
   app.get("/api/courses", findAllCourses);
+
 }
