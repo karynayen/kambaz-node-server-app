@@ -1,34 +1,50 @@
-import { v4 as uuidv4 } from "uuid";
-
+import model from "./model.js";
 export default function EnrollmentsDao(db) {
-  function enrollUserInCourse(userId, courseId) {
-    const { enrollments } = db;
-    const newEnrollment = { _id: uuidv4(), user: userId, course: courseId };
-    db.enrollments = [...enrollments, newEnrollment];
-    return newEnrollment;
-  }
+  async function findCoursesForUser(userId) {
+  const enrollments = await model.find({ user: userId }).populate("course");
+  return enrollments.map((enrollment) => enrollment.course);
+ }
 
-  function unenrollUserFromCourse(userId, courseId) {
-    const { enrollments } = db;
-    db.enrollments = enrollments.filter(
-      (enrollment) => !(enrollment.user === userId && enrollment.course === courseId)
-    );
-  }
 
-  function findEnrollmentsForUser(userId) {
-    const { enrollments } = db;
-    return enrollments.filter((enrollment) => enrollment.user === userId);
-  }
+ async function findUsersForCourse(courseId) {
+   const enrollments = await model.find({ course: courseId }).populate("user");
+   return enrollments.map((enrollment) => enrollment.user);
+ }
 
-  function findUsersForCourse(courseId) {
-    const { enrollments } = db;
-    return enrollments.filter((enrollment) => enrollment.course === courseId);
-  }
 
-  return {
-    enrollUserInCourse,
-    unenrollUserFromCourse,
-    findEnrollmentsForUser,
-    findUsersForCourse,
-  };
+ function enrollUserInCourse(userId, courseId) {
+   return model.create({
+     user: userId,
+     course: courseId,
+     _id: `${userId}-${courseId}`,
+   });
+   // const { enrollments } = db;
+   // enrollments.push({
+   //   _id: uuidv4(),
+   //   user: userId,
+   //   course: courseId,
+   // });
+ }
+ function unenrollUserFromCourse(user, course) {
+   return model.deleteOne({ user, course });
+ }
+
+ function unenrollAllUsersFromCourse(courseId) {
+  return model.deleteMany({ course: courseId });
+}
+
+function findEnrollmentsForUser(userId) {
+  return model.find({ user: userId }).populate("course");
+}
+
+
+
+ return {
+   findCoursesForUser,
+   findUsersForCourse,
+   enrollUserInCourse,
+   unenrollUserFromCourse,
+   unenrollAllUsersFromCourse,
+   findEnrollmentsForUser,
+ };
 }

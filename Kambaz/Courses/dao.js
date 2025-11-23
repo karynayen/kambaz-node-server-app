@@ -22,10 +22,9 @@ export default function CoursesDao(db) {
     return model.create(newCourse);
   }
   function deleteCourse(courseId) {
-    const { enrollments } = db;
-    db.enrollments = enrollments.filter( (enrollment) => enrollment.course !== courseId );
     return model.deleteOne({ _id: courseId });
   }
+
   function updateCourse(courseId, courseUpdates) {
     return model.updateOne({ _id: courseId }, { $set: courseUpdates });
   }

@@ -6,7 +6,7 @@ export default function CourseRoutes(app, db) {
   const createCourse = async (req, res) => {
     const newCourse = await dao.createCourse(req.body);
     const currentUser = req.session["currentUser"];
-    enrollmentsDao.enrollUserInCourse(currentUser._id, newCourse._id);
+    await enrollmentsDao.enrollUserInCourse(currentUser._id, newCourse._id);
     res.json(newCourse);
   }
 
@@ -15,27 +15,29 @@ export default function CourseRoutes(app, db) {
     res.send(courses);
   }
 
-  const findCoursesForEnrolledUser = async (req, res) => {
-    let { userId } = req.params;
-    if (userId === "current") {
-      const currentUser = req.session["currentUser"];
-      if (!currentUser) {
-        res.sendStatus(401);
-        return;
-      }
-      userId = currentUser._id;
+ const findCoursesForEnrolledUser = async (req, res) => {
+  let { userId } = req.params;
+  if (userId === "current") {
+    const currentUser = req.session["currentUser"];
+    if (!currentUser) {
+      res.sendStatus(401);
+      return;
     }
-    const courses = await dao.findCoursesForEnrolledUser(userId);
-    res.json(courses);
-  };
-
-
-
-  const deleteCourse = async (req, res) => {
-    const { courseId } = req.params;
-    const status = await dao.deleteCourse(courseId);
-    res.send(status);
+    userId = currentUser._id;
   }
+  // const courses = await dao.findCoursesForEnrolledUser(userId);
+  const courses = await enrollmentsDao.findCoursesForUser(userId);
+  res.json(courses);
+};
+
+
+const deleteCourse = async (req, res) => {
+  const { courseId } = req.params;
+  await enrollmentsDao.unenrollAllUsersFromCourse(courseId);
+  const status = await dao.deleteCourse(courseId);
+  res.send(status);
+};
+
   const updateCourse = async (req, res) => {
     const { courseId } = req.params;
     const courseUpdates = req.body;
@@ -47,7 +49,7 @@ export default function CourseRoutes(app, db) {
   app.put("/api/courses/:courseId", updateCourse);
   app.delete("/api/courses/:courseId", deleteCourse);
 
-  app.post("/api/users/current/courses", createCourse);
+  app.post("courses/api/users/current/", createCourse);
   app.get("/api/users/:userId/courses", findCoursesForEnrolledUser);
   app.get("/api/courses", findAllCourses);
 }
