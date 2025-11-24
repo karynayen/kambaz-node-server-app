@@ -44,7 +44,12 @@ const deleteCourse = async (req, res) => {
     const status = await dao.updateCourse(courseId, courseUpdates);
     res.send(status);
   }
-
+  const findUsersForCourse = async (req, res) => {
+    const { cid } = req.params;
+    const users = await enrollmentsDao.findUsersForCourse(cid);
+    res.json(users);
+  }
+  app.get("/api/courses/:cid/users", findUsersForCourse);
   app.post("/api/courses", createCourse);
   app.put("/api/courses/:courseId", updateCourse);
   app.delete("/api/courses/:courseId", deleteCourse);
