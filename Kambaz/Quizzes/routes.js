@@ -54,6 +54,13 @@ export default function QuizRoutes(app, db) {
 
   const createQuizForCourse = async (req, res) => {
     const { courseId } = req.params;
+    const currentUser = req.session["currentUser"];
+
+    if (!currentUser || currentUser.role !== "FACULTY") {
+      res.status(403).json({ message: "Only faculty can create quizzes" });
+      return;
+    }
+
     try {
       const quiz = {
         ...req.body,
@@ -69,6 +76,13 @@ export default function QuizRoutes(app, db) {
   const updateQuiz = async (req, res) => {
     const { quizId } = req.params;
     const quizUpdates = req.body;
+    const currentUser = req.session["currentUser"];
+
+    if (!currentUser || currentUser.role !== "FACULTY") {
+      res.status(403).json({ message: "Only faculty can update quizzes" });
+      return;
+    }
+
     try {
       const updatedQuiz = await quizzesDao.updateQuiz(quizId, quizUpdates);
       if (updatedQuiz) {
@@ -83,6 +97,13 @@ export default function QuizRoutes(app, db) {
 
   const deleteQuiz = async (req, res) => {
     const { quizId } = req.params;
+    const currentUser = req.session["currentUser"];
+
+    if (!currentUser || currentUser.role !== "FACULTY") {
+      res.status(403).json({ message: "Only faculty can delete quizzes" });
+      return;
+    }
+
     try {
       await questionsDao.deleteQuestionsForQuiz(quizId);
       await attemptsDao.deleteAttemptsForQuiz(quizId);
@@ -96,6 +117,13 @@ export default function QuizRoutes(app, db) {
   const publishQuiz = async (req, res) => {
     const { quizId } = req.params;
     const { published } = req.body;
+    const currentUser = req.session["currentUser"];
+
+    if (!currentUser || currentUser.role !== "FACULTY") {
+      res.status(403).json({ message: "Only faculty can publish quizzes" });
+      return;
+    }
+
     try {
       const updatedQuiz = await quizzesDao.publishQuiz(quizId, published);
       if (updatedQuiz) {
@@ -124,6 +152,13 @@ export default function QuizRoutes(app, db) {
 
   const createQuestionForQuiz = async (req, res) => {
     const { quizId } = req.params;
+    const currentUser = req.session["currentUser"];
+
+    if (!currentUser || currentUser.role !== "FACULTY") {
+      res.status(403).json({ message: "Only faculty can create questions" });
+      return;
+    }
+
     try {
       const question = {
         ...req.body,
@@ -158,6 +193,13 @@ export default function QuizRoutes(app, db) {
   const updateQuestion = async (req, res) => {
     const { questionId } = req.params;
     const questionUpdates = req.body;
+    const currentUser = req.session["currentUser"];
+
+    if (!currentUser || currentUser.role !== "FACULTY") {
+      res.status(403).json({ message: "Only faculty can update questions" });
+      return;
+    }
+
     try {
       const question = await questionsDao.findQuestionById(questionId);
       if (!question) {
@@ -178,6 +220,13 @@ export default function QuizRoutes(app, db) {
 
   const deleteQuestion = async (req, res) => {
     const { questionId } = req.params;
+    const currentUser = req.session["currentUser"];
+
+    if (!currentUser || currentUser.role !== "FACULTY") {
+      res.status(403).json({ message: "Only faculty can delete questions" });
+      return;
+    }
+
     try {
       const question = await questionsDao.findQuestionById(questionId);
       if (!question) {
